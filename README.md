@@ -21,7 +21,7 @@
 - 支持编译包含内部类的复杂Java代码
 
 ### 2. 动态类加载
-- 提供内存级类加载器 [DynamicClassLoader](src\main\java\cn\wubo\loader\util\class_loader\DynamicClassLoader.java#L16-L96)
+- 提供内存级类加载器
 - 支持从JAR文件加载类
 - 支持单例模式和一次性加载模式
 
