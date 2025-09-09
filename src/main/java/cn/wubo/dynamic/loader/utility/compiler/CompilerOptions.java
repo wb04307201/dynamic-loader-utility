@@ -1,4 +1,4 @@
-package cn.wubo.loader.util.compiler;
+package cn.wubo.dynamic.loader.utility.compiler;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package cn.wubo.loader.util.compiler;
+package cn.wubo.dynamic.loader.utility.compiler;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
