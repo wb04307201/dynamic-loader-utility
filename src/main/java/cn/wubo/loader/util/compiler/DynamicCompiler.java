@@ -1,4 +1,4 @@
-package cn.wubo.loader.util.class_loader;
+package cn.wubo.loader.util.compiler;
 
 import cn.wubo.loader.util.exception.LoaderRuntimeException;
 import com.github.javaparser.StaticJavaParser;

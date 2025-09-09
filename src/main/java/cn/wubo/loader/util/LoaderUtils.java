@@ -1,14 +1,11 @@
 package cn.wubo.loader.util;
 
-import cn.wubo.loader.util.class_loader.ByteArrayClassLoader;
-import cn.wubo.loader.util.class_loader.DynamicCompiler;
+import cn.wubo.loader.util.compiler.ByteArrayClassLoader;
+import cn.wubo.loader.util.compiler.DynamicCompiler;
 import cn.wubo.loader.util.exception.LoaderRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 @Slf4j
 public class LoaderUtils {

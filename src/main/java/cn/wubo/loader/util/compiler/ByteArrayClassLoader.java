@@ -1,8 +1,7 @@
-package cn.wubo.loader.util.class_loader;
+package cn.wubo.loader.util.compiler;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.SecureClassLoader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
