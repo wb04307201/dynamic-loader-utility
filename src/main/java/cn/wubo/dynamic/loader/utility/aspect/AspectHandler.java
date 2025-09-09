@@ -1,4 +1,4 @@
-package cn.wubo.loader.util.aspect;
+package cn.wubo.dynamic.loader.utility.aspect;
 
 
 import org.springframework.cglib.proxy.MethodInterceptor;

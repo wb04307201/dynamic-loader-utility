@@ -1,4 +1,4 @@
-package cn.wubo.loader.util.aspect;
+package cn.wubo.dynamic.loader.utility.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StopWatch;

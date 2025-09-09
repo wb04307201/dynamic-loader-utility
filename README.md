@@ -1,72 +1,42 @@
-# Loader Util - 动态类加载工具库
+# Dynamic Loader Utility 动态加载器工具包
 
-> 一个用于Java动态类加载、编译和Spring集成的工具库，支持运行时动态编译Java代码、加载类文件、注册Spring Bean等功能。
+> 一个用于动态加载和管理Java类的工具库，支持动态编译、AOP代理和Spring Bean管理功能。
 
-[![](https://jitpack.io/v/com.gitee.wb04307201/loader-util.svg)](https://jitpack.io/#com.gitee.wb04307201/loader-util)
-[![star](https://gitee.com/wb04307201/loader-util/badge/star.svg?theme=dark)](https://gitee.com/wb04307201/loader-util)
-[![fork](https://gitee.com/wb04307201/loader-util/badge/fork.svg?theme=dark)](https://gitee.com/wb04307201/loader-util)
-[![star](https://img.shields.io/github/stars/wb04307201/loader-util)](https://github.com/wb04307201/loader-util)
-[![fork](https://img.shields.io/github/forks/wb04307201/loader-util)](https://github.com/wb04307201/loader-util)  
+[![](https://jitpack.io/v/com.gitee.wb04307201/dynamic-loader-utility.svg)](https://jitpack.io/#com.gitee.wb04307201/dynamic-loader-utility)
+[![star](https://gitee.com/wb04307201/dynamic-loader-utility/badge/star.svg?theme=dark)](https://gitee.com/wb04307201/dynamic-loader-utility)
+[![fork](https://gitee.com/wb04307201/dynamic-loader-utility/badge/fork.svg?theme=dark)](https://gitee.com/wb04307201/dynamic-loader-utility)
+[![star](https://img.shields.io/github/stars/wb04307201/dynamic-loader-utility)](https://github.com/wb04307201/dynamic-loader-utility)
+[![fork](https://img.shields.io/github/forks/wb04307201/dynamic-loader-utility)](https://github.com/wb04307201/dynamic-loader-utility)  
 ![MIT](https://img.shields.io/badge/License-Apache2.0-blue.svg) ![JDK](https://img.shields.io/badge/JDK-17+-green.svg) ![SpringBoot](https://img.shields.io/badge/Srping%20Boot-3+-green.svg)
-
-## 代码示例
-1. 使用[动态编译工具](https://gitee.com/wb04307201/loader-util)实现的[动态编译工具工具示例代码](https://gitee.com/wb04307201/loader-util-test)
-2. 使用[动态调度](https://gitee.com/wb04307201/dynamic-schedule-spring-boot-starter)、[消息中间件](https://gitee.com/wb04307201/message-spring-boot-starter)、[动态编译工具](https://gitee.com/wb04307201/loader-util)、[实体SQL工具](https://gitee.com/wb04307201/sql-util)实现的[在线编码、动态调度、发送钉钉群消息、快速构造web页面Demo](https://gitee.com/wb04307201/dynamic-schedule-demo)
 
 ## 功能特性
 
-### 1. 动态编译Java代码
+### 1. 动态编译器 (`compiler`包)
 - 支持在运行时动态编译Java源代码
-- 编译结果存储在内存中，无需写入磁盘文件
-- 支持编译包含内部类的复杂Java代码
+- 内存中编译，无需生成.class文件
+- 支持自定义编译选项
+- 支持加载外部JAR包依赖
 
-### 2. 动态类加载
-- 提供内存级类加载器 [DynamicClassLoader](src\main\java\cn\wubo\loader\util\class_loader\DynamicClassLoader.java#L16-L96)
-- 支持从JAR文件加载类
-- 支持单例模式和一次性加载模式
+主要类：
+- [DynamicCompiler](src\main\java\cn\wubo\dynamic\loader\utility\compiler\DynamicCompiler.java#L15-L139): 核心编译器，提供编译和加载功能
+- [CompilerOptions](src\main\java\cn\wubo\dynamic\loader\utility\compiler\CompilerOptions.java#L5-L51): 编译选项构建器
+- [ByteArrayClassLoader](src\main\java\cn\wubo\dynamic\loader\utility\compiler\ByteArrayClassLoader.java#L7-L51): 字节数组类加载器
 
-### 3. Spring框架集成
-- 动态注册单例Bean到Spring上下文
-- 动态注册控制器(Controller)并自动映射请求路径
-- 支持Bean的动态注销和重新注册
+### 2. AOP代理 ([aspect](src\main\java\cn\wubo\dynamic\loader\utility\aspect\AspectHandler.java#L11-L11)包)
+基于CGLIB实现的面向切面编程支持：
+- [IAspect](src\main\java\cn\wubo\dynamic\loader\utility\aspect\IAspect.java#L7-L36): 切面接口，定义前置、后置和异常处理方法
+- [SimpleAspect](src\main\java\cn\wubo\dynamic\loader\utility\aspect\SimpleAspect.java#L10-L44): 简单实现，提供方法执行时间统计
+- [DynamicAspect](src\main\java\cn\wubo\dynamic\loader\utility\aspect\DynamicAspect.java#L4-L26): 动态代理工厂类
+- [AspectHandler](src\main\java\cn\wubo\dynamic\loader\utility\aspect\AspectHandler.java#L8-L42): 方法拦截处理器
 
-### 4. 方法调用工具
-- 提供便捷的方法调用API
-- 支持类级别和Bean级别的方法调用
-- 集成CGLIB代理和切面编程支持
-- 
-### 5. 切面编程支持
-- 内置简单切面实现，可记录方法执行时间
-- 支持自定义切面逻辑
-- 提供方法执行前、执行后和异常处理的拦截点
-
-## 核心组件
-
-### LoaderUtils
-主要的工具类，提供以下功能：
-- [compiler()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L23-L32): 编译Java源代码并加载到内存
-- [compilerOnce()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L45-L60): 一次性编译并加载Java代码
-- [load()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L68-L77): 加载已编译的类
-- [addJarPath()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L84-L92): 添加JAR文件到类路径
-- [registerSingleton()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L103-L114): 注册单例Bean
-- [registerController()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L125-L136): 注册控制器
-- [clear()](src\main\java\cn\wubo\loader\util\LoaderUtils.java#L144-L146): 清理动态类加载器缓存
-
-### MethodUtils
-方法调用工具类，提供：
-- [invokeClass()](src\main\java\cn\wubo\loader\util\MethodUtils.java#L28-L39): 调用类中的方法
-- [invokeBean()](src\main\java\cn\wubo\loader\util\MethodUtils.java#L74-L76): 调用Spring Bean中的方法
-- [proxy()](src\main\java\cn\wubo\loader\util\MethodUtils.java#L105-L107): 创建代理对象并应用切面
-
-### SpringContextUtils
-Spring上下文工具类，提供：
-- Bean的注册和注销
-- 控制器的动态注册
-- Spring上下文访问功能
+### 3. Spring Bean管理 (`bean`包)
+提供对Spring容器中Bean的动态注册和注销功能：
+- [DynamicBean](src\main\java\cn\wubo\dynamic\loader\utility\bean\DynamicBean.java#L15-L102): 动态Bean管理工具类
+- 支持控制器Bean的注册和注销
+- 支持请求映射的动态更新
 
 ## 快速开始
-### 引入依赖
-增加 JitPack 仓库
+### 增加 JitPack 仓库
 ```xml
 <repositories>
     <repository>
@@ -75,159 +45,52 @@ Spring上下文工具类，提供：
     </repository>
 </repositories>
 ```
-
-1.1.0版本后升级到jdk17 SpringBoot3+  
-1.2.0重构核心代码
-继续使用jdk 8请查看jdk8分支
+### 引入依赖
 ```xml
 <dependency>
     <groupId>com.gitee.wb04307201</groupId>
-    <artifactId>loader-util</artifactId>
-    <version>1.2.0</version>
+    <artifactId>dynamic-loader-utility</artifactId>
+    <version>1.2.1</version>
 </dependency>
 ```
 
-### 使用
-#### 编译Class并执行
+## 使用示例
+
+### 动态编译和加载类
 ```java
-void testClass() {
-  String javaSourceCode = """
-          package cn.wubo.loader.util;
-                          
-          public class TestClass {
-                          
-              public String testMethod(String name){
-                  return String.format("Hello,%s!",name);
-              }
-          }
-          """;
-  LoaderUtils.compiler(javaSourceCode, "cn.wubo.loader.util.TestClass");
-  Class<?> clazz = LoaderUtils.load("cn.wubo.loader.util.TestClass");
-  String str = (String) MethodUtils.invokeClass(clazz, "testMethod", "world");
-}
-//注意：如果重复编译同样的类，会发生异常，如果确实需要这种场景请使用LoaderUtils.compilerOnce
-//也可以使用LoaderUtils.clear方法关闭旧的DynamicClassLoader单例后重新编译
-
-// 通过LoaderUtils.compiler编译的类会缓存到内存中，可以在其他方法中获得
-void testClassDelay() {
-  Class<?> clazz = LoaderUtils.load("cn.wubo.loader.util.TestClass");
-  String str = (String) MethodUtils.invokeClass(clazz, "testMethod", "world");
-}
-
-//如果不想将编译的类会缓存到内存，请使用LoaderUtils.compilerOnce方法
-void testClassOnce() {
-  String javaSourceCode = """
-          package cn.wubo.loader.util;
-                          
-          public class TestClass7 {
-                          
-              public String testMethod(String name){
-                  return String.format("Hello,%s!",name);
-              }
-          }
-          """;
-  Class<?> clazz = LoaderUtils.compilerOnce(javaSourceCode, "cn.wubo.loader.util.TestClass7");
-  String str = (String) MethodUtils.invokeClass(clazz, "testMethod", "world");
+String sourceCode = "public class HelloWorld { public void sayHello() { System.out.println(\"Hello, World!\"); } }";
+try {
+    Class<?> clazz = DynamicCompiler.compileAndLoad(sourceCode);
+    Object instance = clazz.newInstance();
+    Method method = clazz.getMethod("sayHello");
+    method.invoke(instance);
+} catch (Exception e) {
+    e.printStackTrace();
 }
 ```
 
-#### 加载外部jar并执行
+### 使用AOP代理
 ```java
-void testJarClass() {
-  LoaderUtils.addJarPath("./hutool-all-5.8.29.jar");
-  Class<?> clazz = LoaderUtils.load("cn.hutool.core.util.IdUtil");
-  String str = (String) MethodUtils.invokeClass(clazz, "randomUUID");
-}
+// 创建目标对象
+MyService target = new MyService();
+// 创建切面
+SimpleAspect aspect = new SimpleAspect();
+// 创建代理对象
+MyService proxy = DynamicAspect.proxy(target, aspect);
+// 调用方法，将自动应用切面逻辑
+proxy.doSomething();
 ```
 
-#### 编译Class并加载到Bean
-> 使用DynamicBean需要配置@ComponentScan，包括cn.wubo.loader.util.SpringContextUtils文件
+
+### 动态Bean管理
 ```java
-void testBean() {
-  String javaSourceCode = """
-          package cn.wubo.loader.util;
-                          
-          public class TestClass2 {
-                          
-              public String testMethod(String name){
-                  return String.format("Hello,%s!",name);
-              }
-          }
-          """;
-  LoaderUtils.compiler(javaSourceCode, "cn.wubo.loader.util.TestClass2");
-  Class<?> clazz = LoaderUtils.load("cn.wubo.loader.util.TestClass2");
-  String beanName = LoaderUtils.registerSingleton(clazz);
-  String str = MethodUtils.invokeBean(beanName, "testMethod", "world");
-}
+// 注册Bean
+DynamicBean.registerSingleton(beanFactory, "myBean", MyBeanClass.class);
+// 注销Bean
+DynamicBean.unregisterSingleton(beanFactory, "myBean");
 ```
 
-#### 5. DynamicController 动态编译加载Controller并执行
-```java
-public void loadController() {
-  String fullClassName = "cn.wubo.loaderutiltest.DemoController";
-  String javaSourceCode = """
-          package cn.wubo.loaderutiltest;
-                          
-          import org.springframework.web.bind.annotation.GetMapping;
-          import org.springframework.web.bind.annotation.RequestMapping;
-          import org.springframework.web.bind.annotation.RequestParam;
-          import org.springframework.web.bind.annotation.RestController;
-
-          @RestController
-          @RequestMapping(value = "test")
-          public class DemoController {
-
-              @GetMapping(value = "hello")
-              public String hello(@RequestParam(value = "name") String name) {
-                  return String.format("Hello,%s!",name);
-              }
-          }
-          """;
-  LoaderUtils.compiler(javaSourceCode, "cn.wubo.loaderutiltest.DemoController");
-  Class<?> clazz = LoaderUtils.load("cn.wubo.loaderutiltest.DemoController");
-  String beanName = LoaderUtils.registerController(clazz);
-}
-```
-```http request
-GET http://localhost:8080/test/hello?name=world
-Accept: application/json
-
-Hello,world!
-```
-
-#### 动态增加切面代理
-```java
-void testAspect() {
-  String javaSourceCode = """
-          package cn.wubo.loader.util;
-                          
-          public class TestClass6 {
-                          
-              public String testMethod(String name){
-                  return String.format("Hello,%s!",name);
-              }
-          }
-          """;
-  LoaderUtils.compiler(javaSourceCode, "cn.wubo.loader.util.TestClass6");
-  Class<?> clazz = LoaderUtils.load("cn.wubo.loader.util.TestClass6");
-  try {
-    Object obj = MethodUtils.proxy(clazz.newInstance());
-    String str = MethodUtils.invokeClass(obj, "testMethod", "world");
-  } catch (InstantiationException | IllegalAccessException e) {
-    throw new RuntimeException(e);
-  }
-}
-```
-输出示例
-```text
-2023-04-08 21:22:14.174  INFO 32660 --- [nio-8080-exec-1] cn.wubo.loader.util.aspect.SimpleAspect  : SimpleAspect before cn.wubo.loader.util.TestClass testMethod
-2023-04-08 21:22:14.175  INFO 32660 --- [nio-8080-exec-1] cn.wubo.loader.util.aspect.SimpleAspect  : SimpleAspect after cn.wubo.loader.util.TestClass testMethod
-2023-04-08 21:22:14.175  INFO 32660 --- [nio-8080-exec-1] cn.wubo.loader.util.aspect.SimpleAspect  : StopWatch 'cn.wubo.loader.util.TestClass testMethod': running time = 65800 ns
-```
-
-可以通过继承IAspect接口实现自定义切面，并通过MethodUtils.proxy(Class<?> clazz, Class<? extends IAspect> aspectClass)方法调用切面
-
-## 如何在服务器上运行
+## 生产环境进行动态编译
 因为本地和服务器的差异导致classpath路径不同，  
 进而使服务上动态编译class时会发生找不到import类的异常，  
 因此需要对maven编译配置和启动命令做出一定的修改  
@@ -276,17 +139,3 @@ void testAspect() {
 ```shell
 java -jar -Dloader.path=lib/ loader-util-test-0.0.1-SNAPSHOT.jar
 ```
-
-## 注意说明
-```text
-如果编译报错： Can't initialize javac processor due to (most likely) a class loader problem: java.lang.NoClassDefFoundError: com/sun/tools/javac/processing/JavacProcessingEnvironment
-```
-####
-
-这是因为JAVA编译器是通过JavaFileManager来加载相关依赖类的，而JavaFileManager来自tools.jar。
-
-解决办法： 
-- **idea启动的话**，打开Project Strcutre，添加tools.jar
-  ![img.png](img.png)
-- 服务器启动，跑jar包的时候需要加入`-Xbootclasspath/a:$toolspath/tools.jar`参数,nohup java -Xbootclasspath/a:$toolspath/tools.jar -jar loader-util-test-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
-
