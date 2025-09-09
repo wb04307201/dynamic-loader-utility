@@ -1,8 +1,7 @@
 package cn.wubo.loader.util;
 
-import cn.wubo.loader.util.class_loader.DynamicClassLoader;
-import cn.wubo.loader.util.class_loader.JavaBuilder;
-import cn.wubo.loader.util.class_loader.JavaMemClass;
+import cn.wubo.loader.util.class_loader.ByteArrayClassLoader;
+import cn.wubo.loader.util.class_loader.DynamicCompiler;
 import cn.wubo.loader.util.exception.LoaderRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 @Slf4j
 public class LoaderUtils {
@@ -22,13 +20,10 @@ public class LoaderUtils {
      * @param fullClassName  完全限定类名。
      */
     public static void compiler(String javaSourceCode, String fullClassName) {
-        // 使用JavaBuilder编译Java源代码并获取内存中的类映射
-        Map<String, JavaMemClass> javaMemClassMap = JavaBuilder.builder().compiler(javaSourceCode, fullClassName).getJavaMemClassMap();
-        // 获取动态类加载器实例
-        DynamicClassLoader classLoader = DynamicClassLoader.getInstance();
-        // 将编译后的类信息添加到类加载器中
-        for (Map.Entry<String, JavaMemClass> entry : javaMemClassMap.entrySet()) {
-            classLoader.addClassMap(entry.getKey(), entry.getValue().getBytes());
+        try {
+            DynamicCompiler.compile(fullClassName, javaSourceCode, null);
+        } catch (IOException e) {
+            throw new LoaderRuntimeException(e.getMessage(), e);
         }
     }
 
@@ -44,18 +39,10 @@ public class LoaderUtils {
      * @throws LoaderRuntimeException 如果编译或加载过程中发生错误，将抛出此运行时异常。
      */
     public static Class<?> compilerOnce(String javaSourceCode, String fullClassName) {
-        // 使用JavaBuilder编译Java源代码，生成内存中的类对象。
-        Map<String, JavaMemClass> javaMemClassMap = JavaBuilder.builder().compiler(javaSourceCode, fullClassName).getJavaMemClassMap();
-
-        try (DynamicClassLoader dynamicClassLoader = new DynamicClassLoader(Thread.currentThread().getContextClassLoader())) {
-            // 将内存中的类信息添加到自定义类加载器的类映射中。
-            for (Map.Entry<String, JavaMemClass> entry : javaMemClassMap.entrySet()) {
-                dynamicClassLoader.addClassMap(entry.getKey(), entry.getValue().getBytes());
-            }
-            // 使用自定义类加载器加载指定的类。
-            return dynamicClassLoader.loadClass(fullClassName);
+        try {
+            DynamicCompiler.compile(fullClassName, javaSourceCode, null);
+            return DynamicCompiler.load(fullClassName);
         } catch (IOException | ClassNotFoundException e) {
-            // 抛出自定义异常，以更清晰地指示编译或加载过程中的错误。
             throw new LoaderRuntimeException(e.getMessage(), e);
         }
     }
@@ -68,9 +55,7 @@ public class LoaderUtils {
      */
     public static Class<?> load(String fullClassName) {
         try {
-            // 获取动态类加载器实例并加载类
-            DynamicClassLoader classLoader = DynamicClassLoader.getInstance();
-            return classLoader.loadClass(fullClassName);
+            return DynamicCompiler.load(fullClassName);
         } catch (ClassNotFoundException e) {
             // 抛出运行时异常，携带错误信息
             throw new LoaderRuntimeException(e.getMessage(), e);
@@ -85,7 +70,7 @@ public class LoaderUtils {
     public static void addJarPath(String jarPath) {
         try {
             // 获取动态类加载器实例并添加JAR路径
-            DynamicClassLoader.getInstance().addURL(new URL("jar:file:" + new File(jarPath).getAbsolutePath() + "!/"));
+            ByteArrayClassLoader.getInstance().addURL(new URL("jar:file:" + new File(jarPath).getAbsolutePath() + "!/"));
         } catch (MalformedURLException e) {
             // 抛出运行时异常，携带错误信息
             throw new LoaderRuntimeException(e.getMessage(), e);
@@ -94,7 +79,7 @@ public class LoaderUtils {
 
     /**
      * 注册单例 bean 到 Spring 应用上下文中。
-     *
+     * <p>
      * 此方法用于将指定的类作为单例 bean 注册到 Spring 应用上下文中。如果该类已经注册为 bean，则先销毁已存在的 bean 实例，然后重新注册。
      * 这确保了应用上下文中只有一个该类的实例存在。
      *
@@ -116,7 +101,7 @@ public class LoaderUtils {
 
     /**
      * 注册控制器类到Spring上下文中。
-     *
+     * <p>
      * 本方法用于将给定的控制器类注册到Spring应用程序上下文中。如果该类已经注册，则先注销原有的实例，再重新注册。
      * 这确保了Spring上下文中总是存在最新版本的控制器类实例。
      *
@@ -138,12 +123,12 @@ public class LoaderUtils {
 
     /**
      * 清理动态类加载器的缓存。
-     *
+     * <p>
      * 该方法调用了DynamicClassLoader的clear方法，旨在清理动态加载的类，以释放内存资源。
      * 当系统不再需要这些动态加载的类，或者需要重新加载类时，可以调用此方法。
      */
     public static void clear() {
-        DynamicClassLoader.clear();
+        ByteArrayClassLoader.getInstance().clear();
     }
 }
 
