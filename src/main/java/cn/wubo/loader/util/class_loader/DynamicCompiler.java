@@ -6,7 +6,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 
 import javax.tools.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,5 +73,13 @@ public class DynamicCompiler {
 
     public static Class<?> compileAndLoad(String sourceCode, CompilerOptions options) throws IOException, ClassNotFoundException {
         return compileAndLoad(sourceCode, options.build());
+    }
+
+    public static void addJarPath(String jarPath) {
+        try {
+            ByteArrayClassLoader.getInstance().addURL(new URL("jar:file:" + new File(jarPath).getAbsolutePath() + "!/"));
+        } catch (MalformedURLException e) {
+            throw new LoaderRuntimeException(e.getMessage(), e);
+        }
     }
 }

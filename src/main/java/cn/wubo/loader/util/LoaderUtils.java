@@ -68,13 +68,7 @@ public class LoaderUtils {
      * @param jarPath JAR文件路径。
      */
     public static void addJarPath(String jarPath) {
-        try {
-            // 获取动态类加载器实例并添加JAR路径
-            ByteArrayClassLoader.getInstance().addURL(new URL("jar:file:" + new File(jarPath).getAbsolutePath() + "!/"));
-        } catch (MalformedURLException e) {
-            // 抛出运行时异常，携带错误信息
-            throw new LoaderRuntimeException(e.getMessage(), e);
-        }
+        DynamicCompiler.addJarPath(jarPath);
     }
 
     /**
