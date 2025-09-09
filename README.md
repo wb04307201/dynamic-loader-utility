@@ -134,7 +134,6 @@ DynamicBean.unregisterSingleton(beanFactory, "myBean");
             </plugin>
 ```
 ### 2. 执行编译命令，会在jar包的同级目录下生成lib文件夹存放依赖包
-![img.png](img.png)
 ### 3. 将jar包和lib文件夹上到服务器，并在启动命令中增加`-Dloader.path=lib/`
 ```shell
 java -jar -Dloader.path=lib/ loader-util-test-0.0.1-SNAPSHOT.jar
